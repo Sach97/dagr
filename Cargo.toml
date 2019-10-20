@@ -1,0 +1,20 @@
+[package]
+name = "dagr"
+version = "0.1.0"
+authors = ["sacha"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+daggy = { git = "https://github.com/mitchmindtree/daggy", branch = "master", features=["stable_dag"]}
+
+[lib]
+name = "dagr"
+path = "src/lib.rs"
+
+[[bin]]
+name = "dagr"
+path = "src/bin.rs"
+
+
