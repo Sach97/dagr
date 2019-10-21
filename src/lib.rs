@@ -1,5 +1,5 @@
-use daggy::stabledag::{Edges, NodeIndex, StableDag};
-use petgraph::visit::{IntoEdges, IntoNodeReferences, NodeIndexable};
+use daggy::stabledag::{NodeIndex, StableDag};
+use petgraph::visit::{IntoNodeReferences, NodeIndexable};
 
 #[derive(Debug)]
 struct Weight {
@@ -37,7 +37,6 @@ impl Dagr {
 
     pub fn get_index(&mut self, name: &str) -> usize {
         self.dag
-            .graph()
             .node_references()
             .map(|(ix, weight)| {
                 if weight.name == name {
@@ -78,13 +77,12 @@ impl Dagr {
         //parent of Thor is Odin
         let ix1 = self.get_index(name1);
         let ix2 = self.get_index(name2);
-        let result = self.dag.find_edge(
-            self.dag.graph().from_index(ix1),
-            self.dag.graph().from_index(ix2),
-        );
+        let result = self
+            .dag
+            .find_edge(self.dag.from_index(ix1), self.dag.from_index(ix2));
         match result {
             Some(edge) => self.dag.edge_weight(edge).unwrap().to_owned(),
-            None => panic!("error"),
+            None => panic!("error"), //TODO: handle error
         }
     }
 }
