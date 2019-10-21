@@ -129,5 +129,5 @@ fn main() {
     dagr.add_edges(relationships, "parent");
     println!("{:?}", dagr);
 
-    println!("{:?}", dagr.get_index("Odin"))
+    println!("{:?}", dagr.find_relationship("Odin", "Thor"));
 }

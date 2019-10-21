@@ -1,6 +1,5 @@
-use daggy::stabledag::{NodeIndex, StableDag};
-use petgraph::visit::IntoNodeReferences;
-use std::io::Error;
+use daggy::stabledag::{Edges, NodeIndex, StableDag};
+use petgraph::visit::{IntoEdges, IntoNodeReferences, NodeIndexable};
 
 #[derive(Debug)]
 struct Weight {
@@ -73,5 +72,19 @@ impl Dagr {
             NodeIndex::new(idx2),
             relationship.to_owned(),
         );
+    }
+
+    pub fn find_relationship(&mut self, name1: &str, name2: &str) -> String {
+        //parent of Thor is Odin
+        let ix1 = self.get_index(name1);
+        let ix2 = self.get_index(name2);
+        let result = self.dag.find_edge(
+            self.dag.graph().from_index(ix1),
+            self.dag.graph().from_index(ix2),
+        );
+        match result {
+            Some(edge) => self.dag.edge_weight(edge).unwrap().to_owned(),
+            None => panic!("error"),
+        }
     }
 }
