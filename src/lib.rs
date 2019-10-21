@@ -1,4 +1,6 @@
 use daggy::stabledag::{NodeIndex, StableDag};
+use petgraph::visit::IntoNodeReferences;
+use std::io::Error;
 
 #[derive(Debug)]
 struct Weight {
@@ -34,19 +36,38 @@ impl Dagr {
         }
     }
 
-    // pub fn add_eges(&mut self, edges: Vec<(&'static str, &'static str)>) {
-    //     for (name, gender) in edges {
-    //         assert!(self
-    //             .dag
-    //             .add_edge(
-    //                self.dag.nodes,
-    //                 NodeIndex::new(calculate_hash(&gender.to_owned())),
-    //                 0
-    //             )
-    //             .is_ok());
-    //     }
-    // }
-    pub fn add_edge(&mut self, idx1: usize, idx2: usize, relationship: &str) {
+    pub fn get_index(&mut self, name: &str) -> usize {
+        self.dag
+            .graph()
+            .node_references()
+            .map(|(ix, weight)| {
+                if weight.name == name {
+                    Ok(ix.index())
+                } else {
+                    Err(())
+                }
+            })
+            .collect::<Vec<Result<usize, ()>>>()
+            .into_iter()
+            .filter_map(Result::ok)
+            .collect::<Vec<usize>>()
+            .first()
+            .unwrap()
+            .to_owned()
+    }
+
+    pub fn add_edges(
+        &mut self,
+        relationships: Vec<(&'static str, &'static str)>,
+        relationship: &str,
+    ) {
+        for (name1, name2) in relationships {
+            self.add_edge(name1, name2, relationship);
+        }
+    }
+    pub fn add_edge(&mut self, name1: &str, name2: &str, relationship: &str) {
+        let idx1 = self.get_index(name1);
+        let idx2 = self.get_index(name2);
         self.dag.add_edge(
             NodeIndex::new(idx1),
             NodeIndex::new(idx2),

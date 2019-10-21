@@ -126,7 +126,8 @@ fn main() {
         ("Thor", "Magni"),
         ("Járnsaxa", "Magni"),
     ];
-
-    dagr.add_edge(8, 34, "parent");
+    dagr.add_edges(relationships, "parent");
     println!("{:?}", dagr);
+
+    println!("{:?}", dagr.get_index("Odin"))
 }

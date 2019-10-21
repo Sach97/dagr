@@ -8,6 +8,7 @@ edition = "2018"
 
 [dependencies]
 daggy = { git = "https://github.com/mitchmindtree/daggy", branch = "master", features=["stable_dag"]}
+petgraph = "0.4.13"
 
 [lib]
 name = "dagr"
