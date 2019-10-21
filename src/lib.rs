@@ -1,8 +1,10 @@
-use daggy::stabledag::{NodeIndex, StableDag};
-use petgraph::visit::{IntoNodeReferences, NodeIndexable};
+use daggy::petgraph::visit::{
+    EdgeRef, IntoEdgeReferences, IntoEdges, IntoNodeReferences, NodeIndexable,
+};
+use daggy::stabledag::{EdgeIndex, NodeIndex, Parents, StableDag, Walker};
 
-#[derive(Debug)]
-struct Weight {
+#[derive(Debug, Clone)]
+pub struct Weight {
     name: String,
     species: String,
     gender: String,
@@ -84,5 +86,31 @@ impl Dagr {
             Some(edge) => self.dag.edge_weight(edge).unwrap().to_owned(),
             None => panic!("error"), //TODO: handle error
         }
+    }
+
+    pub fn find_children(&mut self, name: &str) -> Vec<Weight> {
+        //find all thor children
+        let ix = self.get_index(name);
+        // let result = self.dag.recursive_walk(self.dag.from_index(ix), |&g, n| {
+        //     Some((
+        //         g.find_edge(g, self.dag.from_index(n))
+        //             .unwrap(),
+        //         n,
+        //     ))
+        // });
+        let mut child_walker = self.dag.children(self.dag.from_index(ix));
+        let child1 = child_walker.walk_next(&self.dag).map(|(e, _)| e).unwrap();
+        let child2 = child_walker.walk_next(&self.dag).map(|(e, _)| e).unwrap();
+        let child3 = child_walker.walk_next(&self.dag).map(|(e, _)| e).unwrap();
+        vec![
+            self.dag
+                .node_weight(self.dag.edge_endpoints(child1).unwrap().1)
+                .unwrap()
+                .to_owned(),
+            self.dag
+                .node_weight(self.dag.edge_endpoints(child2).unwrap().1)
+                .unwrap()
+                .to_owned(), //self.dag.edge_endpoints(child1).unwrap().0;
+        ]
     }
 }
